@@ -52,7 +52,19 @@ npm test
 
 # Watch mode for development
 npm run test:watch
+
+# Debug mode with open handle detection
+npm run test:debug
 ```
+
+### Quality Gates
+
+This project uses Git hooks via Husky to ensure code quality:
+
+- **Pre-commit hook**: Runs tests before each commit to prevent committing broken code
+- **Semantic release**: Ensures proper versioning based on conventional commits
+
+These quality gates help maintain high code quality and prevent breaking changes from being pushed to the repository.
 
 ## Release Process
 
