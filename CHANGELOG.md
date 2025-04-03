@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/reaandrew/scrapr/compare/v1.0.0...v1.0.1) (2025-04-03)
+
+
+### Bug Fixes
+
+* resolve test suite issues ([2c25cdf](https://github.com/reaandrew/scrapr/commit/2c25cdf79c37ead4c564a74b8fce964934dfb4b2))
+
 # 1.0.0 (2025-04-03)
 
 
