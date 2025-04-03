@@ -2,12 +2,20 @@
   "name": "scrapr",
   "version": "0.0.0-development",
   "description": "A simple project using conventional commits and GitHub Actions",
+  "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "start": "node src/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/reaandrew/scrapr.git"
+  },
+  "dependencies": {
+    "puppeteer": "^22.6.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
@@ -15,6 +23,7 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^9.0.3",
     "@semantic-release/release-notes-generator": "^11.0.4",
+    "jest": "^29.7.0",
     "semantic-release": "^21.0.7"
   }
 }

@@ -7,9 +7,18 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Hello World
-      run: echo "Hello, World!"
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 'lts/*'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm test
