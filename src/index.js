@@ -1,20 +1,123 @@
 #!/usr/bin/env node
 import { scrapeUrl } from './scraper.js';
+import path from 'path';
+import fs from 'fs';
 
-// Get the URL from command line arguments
-const url = process.argv[2];
+// Parse command line arguments
+function parseArgs() {
+  const args = process.argv.slice(2);
+  const options = {
+    url: null,
+    downloadResources: null,
+    resourceExtensions: [],
+    help: false
+  };
 
-if (!url) {
-  console.error('Please provide a URL to scrape');
-  console.error('Usage: npm start <url>');
-  process.exit(1);
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    
+    if (arg === '--help' || arg === '-h') {
+      options.help = true;
+    } else if (arg === '--download' || arg === '-d') {
+      options.downloadResources = args[++i];
+    } else if (arg === '--extensions' || arg === '-e') {
+      options.resourceExtensions = args[++i].split(',');
+    } else if (!options.url) {
+      options.url = arg;
+    }
+  }
+  
+  return options;
+}
+
+function showHelp() {
+  console.log(`
+Scrapr - A web scraping tool
+
+Usage: 
+  npm start <url> [options]
+
+Arguments:
+  url                   URL to scrape
+
+Options:
+  -h, --help            Show this help message
+  -d, --download <dir>  Download resources to specified directory
+  -e, --extensions <list>  Comma-separated list of extensions to download (e.g., jpg,png,css)
+
+Examples:
+  npm start https://example.com
+  npm start https://example.com --download ./downloads
+  npm start https://example.com --download ./downloads --extensions jpg,png,gif
+  `);
 }
 
 async function main() {
+  const options = parseArgs();
+  
+  if (options.help) {
+    showHelp();
+    process.exit(0);
+  }
+  
+  if (!options.url) {
+    console.error('Please provide a URL to scrape');
+    console.error('Usage: npm start <url> [options]');
+    console.error('Try "npm start --help" for more information');
+    process.exit(1);
+  }
+  
   try {
-    console.log(`Scraping ${url}...`);
-    const html = await scrapeUrl(url);
-    console.log(html);
+    console.log(`Scraping ${options.url}...`);
+    
+    const scrapeOptions = {};
+    
+    if (options.downloadResources) {
+      console.log(`Will download resources to: ${options.downloadResources}`);
+      scrapeOptions.downloadResources = options.downloadResources;
+      
+      if (options.resourceExtensions.length > 0) {
+        console.log(`Filtering for extensions: ${options.resourceExtensions.join(', ')}`);
+        scrapeOptions.resourceExtensions = options.resourceExtensions;
+      } else {
+        console.log('Will download all resource types');
+      }
+    }
+    
+    const result = await scrapeUrl(options.url, scrapeOptions);
+    
+    if (options.downloadResources) {
+      // If we're downloading resources, write the HTML to a file too
+      const outputDir = options.downloadResources;
+      await fs.promises.mkdir(outputDir, { recursive: true });
+      
+      // Write HTML to file
+      const htmlPath = path.join(outputDir, 'page.html');
+      await fs.promises.writeFile(htmlPath, result.html);
+      console.log(`HTML saved to: ${htmlPath}`);
+      
+      // Show download results
+      const successful = result.resources.filter(r => r.success).length;
+      const failed = result.resources.filter(r => !r.success).length;
+      console.log(`Downloaded ${successful} resources (${failed} failed)`);
+      
+      // Group resources by extension
+      const byExtension = {};
+      for (const resource of result.resources) {
+        if (resource.success) {
+          const ext = resource.extension;
+          byExtension[ext] = (byExtension[ext] || 0) + 1;
+        }
+      }
+      
+      console.log('Resources by extension:');
+      for (const [ext, count] of Object.entries(byExtension)) {
+        console.log(`  ${ext}: ${count}`);
+      }
+    } else {
+      // Just print the HTML
+      console.log(result);
+    }
   } catch (error) {
     console.error('Error during scraping:', error.message);
     process.exit(1);

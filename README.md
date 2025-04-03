@@ -18,11 +18,17 @@ npm install
 ### Command Line
 
 ```bash
-# Basic usage
+# Basic usage to get HTML
 npm start https://example.com
 
-# Or with node directly
-node src/index.js https://example.com
+# Download resources from a page
+npm start https://example.com --download ./downloads
+
+# Download specific file types (by extension)
+npm start https://example.com --download ./downloads --extensions jpg,png,css
+
+# Show help
+npm start --help
 ```
 
 ### As a module
@@ -30,7 +36,8 @@ node src/index.js https://example.com
 ```javascript
 import { scrapeUrl } from './src/scraper.js';
 
-async function example() {
+// Basic HTML scraping
+async function basicExample() {
   const html = await scrapeUrl('https://example.com', {
     timeout: 60000,             // 60 seconds timeout
     waitForNetworkIdle: true    // Wait for network to be idle
@@ -39,7 +46,22 @@ async function example() {
   console.log(html);
 }
 
-example();
+// Resource downloading example
+async function downloadExample() {
+  const result = await scrapeUrl('https://example.com', {
+    downloadResources: './downloads',    // Directory to save resources
+    resourceExtensions: ['jpg', 'png']   // Only download these extensions
+  });
+  
+  console.log(`HTML content: ${result.html.substring(0, 100)}...`);
+  console.log(`Downloaded ${result.resources.length} resources`);
+  
+  // List successful downloads
+  const successful = result.resources.filter(r => r.success);
+  successful.forEach(r => {
+    console.log(`- ${r.url} (${r.extension})`);
+  });
+}
 ```
 
 ## Development
