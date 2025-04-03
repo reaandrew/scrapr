@@ -1,0 +1,20 @@
+{
+  "name": "scrapr",
+  "version": "0.0.0-development",
+  "description": "A simple project using conventional commits and GitHub Actions",
+  "scripts": {
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reaandrew/scrapr.git"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^10.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^9.0.3",
+    "@semantic-release/release-notes-generator": "^11.0.4",
+    "semantic-release": "^21.0.7"
+  }
+}
