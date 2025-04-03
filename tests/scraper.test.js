@@ -1,56 +1,76 @@
 import { jest } from '@jest/globals';
 import { scrapeUrl } from '../src/scraper.js';
 
-// Mock puppeteer
-jest.mock('puppeteer', () => {
-  const contentMock = '<html><body><h1>Test Page</h1></body></html>';
-  
-  return {
-    launch: jest.fn().mockResolvedValue({
-      newPage: jest.fn().mockResolvedValue({
-        goto: jest.fn().mockResolvedValue(),
-        content: jest.fn().mockResolvedValue(contentMock)
-      }),
-      close: jest.fn().mockResolvedValue()
-    })
-  };
-});
-
 describe('scrapeUrl', () => {
+  // Mock HTML content to return
+  const mockHtml = '<html><body><h1>Test Page</h1></body></html>';
+  
+  // Mock functions for page and browser
+  const mockGoto = jest.fn().mockResolvedValue(undefined);
+  const mockContent = jest.fn().mockResolvedValue(mockHtml);
+  const mockClose = jest.fn().mockResolvedValue(undefined);
+  
+  // Mock browser factory function
+  const mockBrowserFactory = jest.fn().mockImplementation(() => {
+    return Promise.resolve({
+      newPage: () => Promise.resolve({
+        goto: mockGoto,
+        content: mockContent
+      }),
+      close: mockClose
+    });
+  });
+  
+  beforeEach(() => {
+    // Reset all mocks before each test
+    jest.clearAllMocks();
+  });
+  
   it('should scrape a valid URL and return HTML content', async () => {
     const url = 'https://example.com';
-    const result = await scrapeUrl(url);
+    const result = await scrapeUrl(url, { browserFactory: mockBrowserFactory });
     
-    expect(result).toBe('<html><body><h1>Test Page</h1></body></html>');
+    expect(result).toBe(mockHtml);
+    expect(mockGoto).toHaveBeenCalledWith(
+      'https://example.com',
+      expect.objectContaining({ 
+        timeout: 30000,
+        waitUntil: 'networkidle0'
+      })
+    );
+    expect(mockContent).toHaveBeenCalled();
+    expect(mockClose).toHaveBeenCalled();
   });
   
   it('should throw an error when URL is not provided', async () => {
     await expect(scrapeUrl()).rejects.toThrow('URL is required');
+    expect(mockBrowserFactory).not.toHaveBeenCalled();
+    expect(mockClose).not.toHaveBeenCalled();
   });
   
   it('should pass custom timeout to page.goto', async () => {
-    const puppeteer = (await import('puppeteer')).default;
-    const mockBrowser = await puppeteer.launch();
-    const mockPage = await mockBrowser.newPage();
+    await scrapeUrl('https://example.com', { 
+      timeout: 60000,
+      browserFactory: mockBrowserFactory
+    });
     
-    await scrapeUrl('https://example.com', { timeout: 60000 });
-    
-    expect(mockPage.goto).toHaveBeenCalledWith(
+    expect(mockGoto).toHaveBeenCalledWith(
       'https://example.com',
       expect.objectContaining({ timeout: 60000 })
     );
+    expect(mockClose).toHaveBeenCalled();
   });
   
   it('should honor waitForNetworkIdle option', async () => {
-    const puppeteer = (await import('puppeteer')).default;
-    const mockBrowser = await puppeteer.launch();
-    const mockPage = await mockBrowser.newPage();
+    await scrapeUrl('https://example.com', { 
+      waitForNetworkIdle: false,
+      browserFactory: mockBrowserFactory
+    });
     
-    await scrapeUrl('https://example.com', { waitForNetworkIdle: false });
-    
-    expect(mockPage.goto).toHaveBeenCalledWith(
+    expect(mockGoto).toHaveBeenCalledWith(
       'https://example.com',
       expect.objectContaining({ waitUntil: 'domcontentloaded' })
     );
+    expect(mockClose).toHaveBeenCalled();
   });
 });
