@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/reaandrew/scrapr/compare/v1.2.0...v1.3.0) (2025-04-04)
+
+
+### Features
+
+* add parallel download capabilities ([c8a1711](https://github.com/reaandrew/scrapr/commit/c8a17115e2e72d1b0c112aeaa11b810cf5dda0fd))
+
 # [1.2.0](https://github.com/reaandrew/scrapr/compare/v1.1.0...v1.2.0) (2025-04-04)
 
 
