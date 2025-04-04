@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/reaandrew/scrapr/compare/v1.0.2...v1.1.0) (2025-04-04)
+
+
+### Features
+
+* add resource downloading functionality ([0f464d7](https://github.com/reaandrew/scrapr/commit/0f464d73eb5dcb4519d208fc5fc3a984edf7e216))
+
 ## [1.0.2](https://github.com/reaandrew/scrapr/compare/v1.0.1...v1.0.2) (2025-04-03)
 
 
