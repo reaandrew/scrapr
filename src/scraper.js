@@ -127,14 +127,21 @@ export async function scrapeUrl(url, options = {}) {
     
     // Download resources if requested
     if (downloadResources) {
+      // Enhanced resource detection approach
       const resources = await page.evaluate(() => {
+        // Detect all links
+        const links = Array.from(document.querySelectorAll('a'));
+        const linkUrls = links.map(link => link.href).filter(Boolean);
+
+        // Detect resources with src and href attributes
         const srcElements = Array.from(document.querySelectorAll('[src]'));
         const hrefElements = Array.from(document.querySelectorAll('[href]'));
         
         const srcs = srcElements.map(el => el.getAttribute('src'));
         const hrefs = hrefElements.map(el => el.getAttribute('href'));
         
-        return [...srcs, ...hrefs]
+        // Combine all resources
+        return [...srcs, ...hrefs, ...linkUrls]
           .filter(Boolean)
           .map(url => {
             try {
@@ -147,20 +154,42 @@ export async function scrapeUrl(url, options = {}) {
           .filter(Boolean);
       });
       
-      // Filter resources by extension if specified
-      const filteredResources = resourceExtensions.length > 0
-        ? resources.filter(res => {
-            const ext = getExtension(res);
-            return resourceExtensions.includes(ext);
-          })
-        : resources;
+      // Filter resources: either by specified extensions, or only resources with known extensions
+      const filteredResources = resources.filter(res => {
+        const ext = getExtension(res);
+        if (ext === 'unknown') return false; // Skip resources without extension
+        return resourceExtensions.length > 0 ? resourceExtensions.includes(ext) : true;
+      });
       
       // Download each resource
       await ensureDirectoryExists(downloadResources);
       
-      for (const resourceUrl of filteredResources) {
-        const downloadResult = await downloadResource(page, resourceUrl, downloadResources);
-        result.resources.push(downloadResult);
+      // Log stats before downloading
+      console.log(`Found ${filteredResources.length} resources with valid extensions`);
+      if (filteredResources.length === 0) {
+        console.log('No resources with identifiable extensions found on the page');
+      } else {
+        // Group and count by extension for better visibility
+        const extCounts = {};
+        filteredResources.forEach(res => {
+          const ext = getExtension(res);
+          extCounts[ext] = (extCounts[ext] || 0) + 1;
+        });
+        
+        console.log('Resources by extension:');
+        Object.entries(extCounts).forEach(([ext, count]) => {
+          console.log(`  ${ext}: ${count} files`);
+        });
+        
+        // Download resources
+        const total = filteredResources.length;
+        for (let i = 0; i < filteredResources.length; i++) {
+          const resourceUrl = filteredResources[i];
+          const ext = getExtension(resourceUrl);
+          console.log(`Downloading ${ext} file ${i+1}/${total}: ${resourceUrl}`);
+          const downloadResult = await downloadResource(page, resourceUrl, downloadResources);
+          result.resources.push(downloadResult);
+        }
       }
     }
     

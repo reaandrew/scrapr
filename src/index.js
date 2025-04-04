@@ -69,6 +69,7 @@ async function main() {
   
   try {
     console.log(`Scraping ${options.url}...`);
+    console.log('This may take a while depending on the page size and number of resources...');
     
     const scrapeOptions = {};
     
