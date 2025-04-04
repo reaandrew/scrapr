@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/reaandrew/scrapr/compare/v1.3.0...v1.4.0) (2025-04-04)
+
+
+### Features
+
+* integrate SonarQube for code quality analysis ([20d4d10](https://github.com/reaandrew/scrapr/commit/20d4d10027e1d28e50c6e75ad2ffc23bf334aa56))
+
 # [1.3.0](https://github.com/reaandrew/scrapr/compare/v1.2.0...v1.3.0) (2025-04-04)
 
 
