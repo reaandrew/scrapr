@@ -95,10 +95,28 @@ To run a local SonarQube analysis:
 
 ```bash
 # Make sure you have SonarQube running locally or set up connection details
+# For local SonarQube instance (typical default):
+export SONAR_HOST_URL=http://localhost:9000
+export SONAR_TOKEN=your-sonar-token
+
+# Then run the analysis
 npm run sonar
 ```
 
 These quality gates help maintain high code quality and prevent breaking changes from being pushed to the repository.
+
+## CI/CD Setup
+
+The project uses GitHub Actions for Continuous Integration:
+
+- **Testing**: Runs tests on every push and pull request
+- **SonarQube Analysis**: Analyzes code quality and test coverage 
+- **Semantic Release**: Automatically publishes new versions based on commit messages
+
+To set up CI properly, you need to add this secret to your GitHub repository:
+- `SONAR_TOKEN`: Your SonarQube authentication token
+
+You'll also need to configure the SonarQube host URL in your sonar-project.properties file.
 
 ## Release Process
 
