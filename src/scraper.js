@@ -49,12 +49,13 @@ export async function ensureDirectoryExists(dirPath) {
 /**
  * Download a file from URL
  * 
- * @param {Object} page - Puppeteer page object
+ * @param {Object} browser - Puppeteer browser instance
  * @param {string} resourceUrl - URL of resource to download
  * @param {string} outputDir - Directory to save downloaded file
  * @returns {Promise<Object>} Result of download operation
  */
-export async function downloadResource(page, resourceUrl, outputDir) {
+export async function downloadResource(browser, resourceUrl, outputDir) {
+  const page = await browser.newPage();
   try {
     const extension = getExtension(resourceUrl);
     const extensionDir = path.join(outputDir, extension);
@@ -82,6 +83,8 @@ export async function downloadResource(page, resourceUrl, outputDir) {
       url: resourceUrl, 
       error: error.message 
     };
+  } finally {
+    await page.close();
   }
 }
 
@@ -103,7 +106,8 @@ export async function scrapeUrl(url, options = {}) {
     waitForNetworkIdle = true,
     browserFactory = createBrowser,
     downloadResources = null,
-    resourceExtensions = []
+    resourceExtensions = [],
+    concurrencyLimit = 5
   } = options;
   
   if (!url) {
@@ -181,14 +185,32 @@ export async function scrapeUrl(url, options = {}) {
           console.log(`  ${ext}: ${count} files`);
         });
         
-        // Download resources
+        // Download resources in parallel with concurrency control
         const total = filteredResources.length;
-        for (let i = 0; i < filteredResources.length; i++) {
-          const resourceUrl = filteredResources[i];
-          const ext = getExtension(resourceUrl);
-          console.log(`Downloading ${ext} file ${i+1}/${total}: ${resourceUrl}`);
-          const downloadResult = await downloadResource(page, resourceUrl, downloadResources);
-          result.resources.push(downloadResult);
+        let completed = 0;
+
+        console.log(`Downloading ${total} resources with concurrency limit of ${concurrencyLimit}...`);
+        
+        // Process resources in batches for controlled parallelism
+        for (let i = 0; i < filteredResources.length; i += concurrencyLimit) {
+          const batch = filteredResources.slice(i, i + concurrencyLimit);
+          
+          // Download batch in parallel
+          const downloadPromises = batch.map(async (resourceUrl, batchIndex) => {
+            const index = i + batchIndex;
+            const ext = getExtension(resourceUrl);
+            console.log(`Starting download ${index+1}/${total}: ${ext} file: ${resourceUrl}`);
+            
+            const downloadResult = await downloadResource(browser, resourceUrl, downloadResources);
+            completed++;
+            
+            console.log(`Completed download ${completed}/${total}: ${ext} file${downloadResult.success ? '' : ' (FAILED)'}`);
+            return downloadResult;
+          });
+          
+          // Wait for current batch to complete before starting next batch
+          const batchResults = await Promise.all(downloadPromises);
+          result.resources.push(...batchResults);
         }
       }
     }

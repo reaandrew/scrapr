@@ -10,6 +10,7 @@ function parseArgs() {
     url: null,
     downloadResources: null,
     resourceExtensions: [],
+    concurrency: 5, // Default concurrency
     help: false
   };
 
@@ -22,6 +23,11 @@ function parseArgs() {
       options.downloadResources = args[++i];
     } else if (arg === '--extensions' || arg === '-e') {
       options.resourceExtensions = args[++i].split(',');
+    } else if (arg === '--concurrency' || arg === '-c') {
+      options.concurrency = parseInt(args[++i], 10);
+      if (isNaN(options.concurrency) || options.concurrency < 1) {
+        options.concurrency = 5; // Reset to default if invalid
+      }
     } else if (!options.url) {
       options.url = arg;
     }
@@ -41,14 +47,16 @@ Arguments:
   url                   URL to scrape
 
 Options:
-  -h, --help            Show this help message
-  -d, --download <dir>  Download resources to specified directory
+  -h, --help               Show this help message
+  -d, --download <dir>     Download resources to specified directory
   -e, --extensions <list>  Comma-separated list of extensions to download (e.g., jpg,png,css)
+  -c, --concurrency <num>  Number of concurrent downloads (default: 5)
 
 Examples:
   npm start https://example.com
   npm start https://example.com --download ./downloads
   npm start https://example.com --download ./downloads --extensions jpg,png,gif
+  npm start https://example.com --download ./downloads --concurrency 10
   `);
 }
 
@@ -76,6 +84,10 @@ async function main() {
     if (options.downloadResources) {
       console.log(`Will download resources to: ${options.downloadResources}`);
       scrapeOptions.downloadResources = options.downloadResources;
+      
+      // Set concurrency limit for parallel downloads
+      scrapeOptions.concurrencyLimit = options.concurrency;
+      console.log(`Using concurrency level: ${options.concurrency} parallel downloads`);
       
       if (options.resourceExtensions.length > 0) {
         console.log(`Filtering for extensions: ${options.resourceExtensions.join(', ')}`);

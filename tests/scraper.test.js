@@ -33,12 +33,16 @@ describe('scrapeUrl', () => {
   
   // Mock browser factory function
   const mockBrowserFactory = jest.fn().mockImplementation(() => {
+    // Create a mock page object
+    const mockPage = {
+      goto: mockGoto,
+      content: mockContent,
+      evaluate: mockEvaluate,
+      close: mockClose
+    };
+    
     return Promise.resolve({
-      newPage: () => Promise.resolve({
-        goto: mockGoto,
-        content: mockContent,
-        evaluate: mockEvaluate
-      }),
+      newPage: () => Promise.resolve(mockPage),
       close: mockClose
     });
   });
