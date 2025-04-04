@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/reaandrew/scrapr/compare/v1.1.0...v1.2.0) (2025-04-04)
+
+
+### Features
+
+* improve resource detection and add progress reporting ([767f503](https://github.com/reaandrew/scrapr/commit/767f5034b924ab48af473c7f521cd2bd92c6b899))
+
 # [1.1.0](https://github.com/reaandrew/scrapr/compare/v1.0.2...v1.1.0) (2025-04-04)
 
 
