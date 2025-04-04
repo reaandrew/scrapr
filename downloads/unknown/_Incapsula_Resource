@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>[Error Title]</title>
+<style type="text/css">
+button,html input[type=button],input,input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}
+.container,.main,body,html{height:100%}*,:after,:before{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
+button,input{font-size:100%;margin:0;vertical-align:baseline;line-height:normal}
+input[type=text]{cursor:text}
+body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;line-height:1.428571429;color:#999;background-color:#f5f5f5;margin:0}
+.container{width:620px;margin:0 auto;position:relative}
+.container>.container-inner{display:table;width:100%;height:100%}
+.main{display:table-cell;vertical-align:middle}
+.main>.main-inner{border:1px solid #e2e2e2;border-radius:5px}
+h1,h2,h3{margin:0;font-weight:400}
+h1,h2{color:#726f6f}
+.error-headline{border-bottom:1px solid #c6c6c6;background-image:linear-gradient(bottom,#dcd9d9 37%,#e8e8e8 100%);background-image:-o-linear-gradient(bottom,#dcd9d9 37%,#e8e8e8 100%);background-image:-moz-linear-gradient(bottom,#dcd9d9 37%,#e8e8e8 100%);background-image:-webkit-linear-gradient(bottom,#dcd9d9 37%,#e8e8e8 100%);background-image:-ms-linear-gradient(bottom,#dcd9d9 37%,#e8e8e8 100%)}
+.error-headline>.headline-inner{border-top:1px solid #f9f5f5;padding-left:20px;border-radius:5px}
+.error-headline h1{font-size:20px;font-weight:400;text-shadow:0 1px 1px #fff;padding:30px 0;margin:0}
+.error-content{background-color:#fff;padding-left:20px}
+.captcha,.error-description,.error-details,.error-report{padding:30px 0;width:90%;color:#999}
+.error-description{border-bottom:1px dashed #e2e2e2}
+.error-content p{margin:0}
+.error-details>h2{font-size:16px;font-weight:700}
+.error-details>.x-info{font-size:12px;color:#e1e1e1}
+.hide{display:none}
+.show{display:block!important}
+.highlighted{color:#4aa6d6}
+.info-text{color:#666}
+@media (max-width:600px){
+.main{padding:10px}
+.container{width:auto}
+.error-headline h1{font-size:16px!important}
+.hide-small-viewport{display:none;visibility:hidden}
+}
+iframe[src="about:blank"]{display:none}
+.error-details>ul{padding-left:0;list-style:none;overflow:hidden;margin:0}
+.error-details>ul>li{float:left;margin-right:3px}
+.error-details>ul>li>span{margin-right:3px}
+.captcha.show,.error-report{border-top:1px dashed #e2e2e2}
+.submit-btn,.submit-errors-btn{background-color:#80B82C;background-image:linear-gradient(bottom,#80B82C 37%,#B2D54A 100%);background-image:-webkit-linear-gradient(bottom,#80B82C 37%,#B2D54A 100%);background-image:-o-linear-gradient(bottom,#80B82C 37%,#B2D54A 100%);background-image:-moz-linear-gradient(bottom,#80B82C 37%,#B2D54A 100%);background-image:-ms-linear-gradient(bottom,#80B82C 37%,#B2D54A 100%);border:0;display:block;padding:8px 15px;color:#fff;text-shadow:1px 1px 1px rgba(150,150,150,.7);border-radius:3px;font-weight:700}
+.submit-btn:hover,.submit-errors-btn:hover{background-image:linear-gradient(bottom,#7CB22B 37%,#ADCF48 100%);background-image:-o-linear-gradient(bottom,#7CB22B 37%,#ADCF48 100%);background-image:-moz-linear-gradient(bottom,#7CB22B 37%,#ADCF48 100%);background-image:-webkit-linear-gradient(bottom,#7CB22B 37%,#ADCF48 100%);background-image:-ms-linear-gradient(bottom,#7CB22B 37%,#ADCF48 100%);background-color:#7CB22B}
+.form_container{max-width:447px;margin:0 auto}
+.captcha-status{margin-bottom:10px;padding:5px 10px;text-align:center}
+.captcha .success{background-color:#dff0d8;border-color:#d6e9c6;color:#3c763d}
+.captcha .fail{background-color:#f2dede;border-color:#ebccd1;color:#a94442}
+.captcha .submit-btn{float:right}
+.error-details>.error-code{font-size:12px;margin-top:10px}
+.extra-info>div{padding:5px}
+.extra-info .title{color:#1864A0;font-weight:700}
+.extra-info .content{color:#707070}
+.powered-by{color:#726f6f;text-align:right;margin-top:15px;font-style:italic;font-size:12px}
+.powered-by .copyrights{color:#75c044;text-decoration:none}
+.incapsulaLink{color: #3476b2;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="container-inner">
+<div class="main">
+<div class="main-inner">
+<div class="error-headline">
+<div class="headline-inner">
+<h1>www.sans.org Additional security check is required</h1>
+</div>
+</div>
+<div class="error-content">
+
+    <script type="text/javascript">
+        var RecaptchaOptions = {theme : 'custom', custom_theme_widget: 'recaptcha_widget'};
+        var onCaptchaFinished = function(response) {
+            var xhr;
+            if (window.XMLHttpRequest) {
+                xhr = new XMLHttpRequest;
+            } else {
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            var msg = "g-recaptcha-response=" + response;
+            xhr.open("POST", "/_Incapsula_Resource?SWCGHOEL=v2&cts=By4%2bZvXxdW6m2V0kHPVeatA7IwU0v3SSJvlQ46%2b8bCeaYzCTwLB484D0CSc6ZXKt", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function(){
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        window.parent.location.reload(true);
+                    } else {
+                        window.parent.location.reload(true); 
+                    }
+                }
+            }
+            xhr.send(msg);
+        };
+    </script>
+    <script src='https://js.hcaptcha.com/1/api.js'></script>
+    <div class="captcha">
+        <div class="form_container">
+            <div class="h-captcha" data-sitekey="dd6e16a7-972e-47d2-93d0-96642fb6d8de" data-callback="onCaptchaFinished" ></div>
+        </div>
+    </div>
+
+<br />
+<br />
+<div class="what-should-i-do round border">
+<div class="title">
+Please contact SANS support for further assistance.
+</div>
+<div class="content">
+info@sans.org
+<br />301-654-SANS(7267)
+</div>
+</div>
+<div id="extraInfo" style="display:none" class="extra-info">
+<div class="what-should-i-do round border">
+<div class="title">
+What should I do?
+</div>
+<div class="content">
+Just click the <b>I'm not a robot</b> checkbox to pass the security check. The site will remember you and will not show this page again.
+</div>
+</div>
+</div>
+<br />
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+var captcha = document.getElementsByClassName("captcha");
+if ( captcha.length > 0 ) {
+document.getElementById( "extraInfo" ).style.display = 'block';
+}
+</script>
+</body>
+</html>

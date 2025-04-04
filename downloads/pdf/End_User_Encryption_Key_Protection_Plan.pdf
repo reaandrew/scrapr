@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        margin: 0;
+        background-color: rgb(82, 86, 89);
+      }
+    </style>
+  </head>
+  <body>
+    <template shadowrootmode="closed">
+      <style>
+        iframe {
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 100%;
+          border-style: none;
+        }
+      </style>
+      <iframe name="41BC50F1F5E0B08AD57E5EF8B919F85C" src="about:blank" type="application/pdf" internalid="41BC50F1F5E0B08AD57E5EF8B919F85C"
+          allow="fullscreen *">
+    </template>
+  </body>
+</html>

@@ -9,5 +9,9 @@ export default {
   // Set a timeout for tests to avoid hanging
   testTimeout: 10000,
   // Force exit after tests complete to avoid hanging processes
-  forceExit: true
+  forceExit: true,
+  // Enable coverage collection
+  collectCoverage: true,
+  coverageReporters: ['lcov', 'text', 'html'],
+  coverageDirectory: 'coverage'
 };

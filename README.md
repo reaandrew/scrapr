@@ -27,6 +27,9 @@ npm start https://example.com --download ./downloads
 # Download specific file types (by extension)
 npm start https://example.com --download ./downloads --extensions jpg,png,css
 
+# Control download parallelism (default is 5)
+npm start https://example.com --download ./downloads --concurrency 10
+
 # Show help
 npm start --help
 ```
@@ -50,7 +53,8 @@ async function basicExample() {
 async function downloadExample() {
   const result = await scrapeUrl('https://example.com', {
     downloadResources: './downloads',    // Directory to save resources
-    resourceExtensions: ['jpg', 'png']   // Only download these extensions
+    resourceExtensions: ['jpg', 'png'],  // Only download these extensions
+    concurrencyLimit: 10                 // Download 10 files at once
   });
   
   console.log(`HTML content: ${result.html.substring(0, 100)}...`);
@@ -81,10 +85,18 @@ npm run test:debug
 
 ### Quality Gates
 
-This project uses Git hooks via Husky to ensure code quality:
+This project uses multiple tools to ensure code quality:
 
 - **Pre-commit hook**: Runs tests before each commit to prevent committing broken code
 - **Semantic release**: Ensures proper versioning based on conventional commits
+- **SonarQube**: Analyzes code quality, test coverage, and potential issues
+
+To run a local SonarQube analysis:
+
+```bash
+# Make sure you have SonarQube running locally or set up connection details
+npm run sonar
+```
 
 These quality gates help maintain high code quality and prevent breaking changes from being pushed to the repository.
 

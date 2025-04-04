@@ -11,7 +11,8 @@
     "test:debug": "node --experimental-vm-modules node_modules/jest/bin/jest.js --detectOpenHandles",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "prepare": "husky",
-    "pre-commit": "npm test"
+    "pre-commit": "npm test",
+    "sonar": "sonar-scanner"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,8 @@
     "husky": "^9.1.7",
     "jest": "^29.7.0",
     "lint-staged": "^15.5.0",
-    "semantic-release": "^21.0.7"
+    "semantic-release": "^21.0.7",
+    "sonarqube-scanner": "^4.3.0"
   },
   "lint-staged": {
     "*.js": "npm test"
