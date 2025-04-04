@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/reaandrew/scrapr/compare/v1.4.0...v1.4.1) (2025-04-04)
+
+
+### Bug Fixes
+
+* update SonarQube configuration ([7a26ec9](https://github.com/reaandrew/scrapr/commit/7a26ec9eefd6552ea092b862141d6d803e0697c3))
+
 # [1.4.0](https://github.com/reaandrew/scrapr/compare/v1.3.0...v1.4.0) (2025-04-04)
 
 
