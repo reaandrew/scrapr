@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/reaandrew/scrapr/compare/v1.7.0...v1.8.0) (2025-04-17)
+
+
+### Features
+
+* add HTML stripping option for Confluence scraper ([f31bfaa](https://github.com/reaandrew/scrapr/commit/f31bfaadc98190b18b089e9b3d87de4f50fe93c2))
+
 # [1.7.0](https://github.com/reaandrew/scrapr/compare/v1.6.0...v1.7.0) (2025-04-17)
 
 
