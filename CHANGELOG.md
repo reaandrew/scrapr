@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/reaandrew/scrapr/compare/v1.5.0...v1.6.0) (2025-04-17)
+
+
+### Features
+
+* add Confluence scraping command ([1e8540c](https://github.com/reaandrew/scrapr/commit/1e8540c0c29ceed46a7a7a7dea178b8bc636117e))
+
 # [1.5.0](https://github.com/reaandrew/scrapr/compare/v1.4.1...v1.5.0) (2025-04-17)
 
 
