@@ -18,6 +18,10 @@ coverage/
 .env.test.local
 .env.production.local
 
+# Configuration files with sensitive data
+scrapr.config.yml
+*.config.yml
+
 # IDE and editor files
 .idea/
 .vscode/

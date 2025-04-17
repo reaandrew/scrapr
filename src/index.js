@@ -132,11 +132,16 @@ program
       console.log(`Scraping Confluence space: ${mergedOptions.spaceId} from ${mergedOptions.baseUrl}...`);
       console.log('This may take a while depending on the space size and number of pages...');
       
+      if (mergedOptions.stripHtml) {
+        console.log('HTML stripping is enabled - content will be converted to plain text');
+      }
+      
       const confluenceOptions = {
         baseUrl: mergedOptions.baseUrl,
         spaceId: mergedOptions.spaceId,
         outputDir: mergedOptions.output,
         concurrencyLimit: mergedOptions.concurrency,
+        stripHtml: mergedOptions.stripHtml,
       };
       
       // Add authentication if provided

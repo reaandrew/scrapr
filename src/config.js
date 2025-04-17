@@ -51,6 +51,7 @@ confluence:
   # Optional settings
   output: ./confluence-output   # Output directory for JSON files
   concurrency: 5               # Number of concurrent requests
+  stripHtml: true             # Whether to strip HTML from content
   
   # Authentication (recommended to use environment variables instead)
   # username: your-username@example.com

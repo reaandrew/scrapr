@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
 import { createBrowser } from './scraper.js';
+import striptags from 'striptags';
 
 /**
  * Scrape Confluence space and save pages as JSON files
@@ -14,6 +15,7 @@ import { createBrowser } from './scraper.js';
  * @param {Object} options.auth - Authentication credentials (optional)
  * @param {string} options.auth.username - Confluence username
  * @param {string} options.auth.token - API token for authentication
+ * @param {boolean} options.stripHtml - Whether to strip HTML from content
  * @returns {Promise<Object>} Result information
  */
 export async function scrapeConfluence(options) {
@@ -23,7 +25,8 @@ export async function scrapeConfluence(options) {
     outputDir = './output',
     concurrencyLimit = 5,
     auth = null,
-    browserFactory = createBrowser
+    browserFactory = createBrowser,
+    stripHtml: stripHtmlContent = false
   } = options;
   
   if (!baseUrl) {
@@ -76,7 +79,7 @@ export async function scrapeConfluence(options) {
       console.log(`Found homepage ID: ${homepageId}`);
       
       // Get the homepage content
-      const homepage = await getPageContent(browser, baseUrl, homepageId, auth);
+      const homepage = await getPageContent(browser, baseUrl, homepageId, auth, stripHtmlContent);
       
       // Save the homepage content
       const homepagePath = path.join(spacePath, `page-${homepageId}.json`);
@@ -87,11 +90,11 @@ export async function scrapeConfluence(options) {
       
       // Find all child pages from the homepage
       console.log('Getting child pages...');
-      await getChildPages(browser, baseUrl, homepageId, spacePath, result, auth, concurrencyLimit);
+      await getChildPages(browser, baseUrl, homepageId, spacePath, result, auth, concurrencyLimit, stripHtmlContent);
     } else {
       console.log('No homepage found, getting all pages for the space...');
       // Get all pages for the space if no homepage is defined
-      await getAllPages(browser, baseUrl, spaceId, spacePath, result, auth, concurrencyLimit);
+      await getAllPages(browser, baseUrl, spaceId, spacePath, result, auth, concurrencyLimit, stripHtmlContent);
     }
     
     // Save the index of all pages
@@ -126,7 +129,7 @@ export async function scrapeConfluence(options) {
  * @param {Object} auth - Authentication credentials (optional)
  * @returns {Promise<Object>} Page content
  */
-async function getPageContent(browser, baseUrl, pageId, auth) {
+async function getPageContent(browser, baseUrl, pageId, auth, stripHtmlContent = false) {
   const page = await browser.newPage();
   try {
     if (auth) {
@@ -148,6 +151,12 @@ async function getPageContent(browser, baseUrl, pageId, auth) {
     const pageInfo = await response.json();
     
     // Extract the relevant information
+    const htmlContent = pageInfo.body.storage.value;
+    // Apply HTML stripping if enabled - striptags removes all HTML tags
+    const processedContent = stripHtmlContent 
+      ? striptags(htmlContent) 
+      : htmlContent;
+      
     return {
       id: pageInfo.id,
       title: pageInfo.title,
@@ -156,7 +165,7 @@ async function getPageContent(browser, baseUrl, pageId, auth) {
       updatedAt: pageInfo.version.when,
       parentId: pageInfo.ancestors.length > 0 ? pageInfo.ancestors[pageInfo.ancestors.length - 1].id : null,
       contentUrl: `${baseUrl}${pageInfo._links.webui}`,
-      content: pageInfo.body.storage.value,
+      content: processedContent,
       childrenIds: pageInfo.children.page.results.map(p => p.id)
     };
   } finally {
@@ -176,9 +185,9 @@ async function getPageContent(browser, baseUrl, pageId, auth) {
  * @param {number} concurrencyLimit - Number of concurrent requests
  * @returns {Promise<void>}
  */
-async function getChildPages(browser, baseUrl, parentId, outputDir, result, auth, concurrencyLimit) {
+async function getChildPages(browser, baseUrl, parentId, outputDir, result, auth, concurrencyLimit, stripHtmlContent = false) {
   // Get the parent page first to get child page IDs
-  const parentPage = await getPageContent(browser, baseUrl, parentId, auth);
+  const parentPage = await getPageContent(browser, baseUrl, parentId, auth, stripHtmlContent);
   const childIds = parentPage.childrenIds;
   
   if (childIds.length === 0) {
@@ -197,7 +206,7 @@ async function getChildPages(browser, baseUrl, parentId, outputDir, result, auth
     const promises = batch.map(async (childId) => {
       try {
         // Get the child page content
-        const childPage = await getPageContent(browser, baseUrl, childId, auth);
+        const childPage = await getPageContent(browser, baseUrl, childId, auth, stripHtmlContent);
         
         // Save the child page content
         const childPath = path.join(outputDir, `page-${childId}.json`);
@@ -208,7 +217,7 @@ async function getChildPages(browser, baseUrl, parentId, outputDir, result, auth
         result.pageCount++;
         
         // Process this child's children recursively
-        await getChildPages(browser, baseUrl, childId, outputDir, result, auth, concurrencyLimit);
+        await getChildPages(browser, baseUrl, childId, outputDir, result, auth, concurrencyLimit, stripHtmlContent);
       } catch (error) {
         console.error(`Error processing page ${childId}: ${error.message}`);
       }
@@ -231,7 +240,7 @@ async function getChildPages(browser, baseUrl, parentId, outputDir, result, auth
  * @param {number} concurrencyLimit - Number of concurrent requests
  * @returns {Promise<void>}
  */
-async function getAllPages(browser, baseUrl, spaceId, outputDir, result, auth, concurrencyLimit) {
+async function getAllPages(browser, baseUrl, spaceId, outputDir, result, auth, concurrencyLimit, stripHtmlContent = false) {
   const page = await browser.newPage();
   try {
     if (auth) {
@@ -271,7 +280,7 @@ async function getAllPages(browser, baseUrl, spaceId, outputDir, result, auth, c
         const promises = batch.map(async (pageInfo) => {
           try {
             // Get the page content
-            const pageContent = await getPageContent(browser, baseUrl, pageInfo.id, auth);
+            const pageContent = await getPageContent(browser, baseUrl, pageInfo.id, auth, stripHtmlContent);
             
             // Save the page content
             const pagePath = path.join(outputDir, `page-${pageInfo.id}.json`);

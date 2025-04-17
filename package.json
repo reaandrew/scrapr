@@ -24,7 +24,8 @@
   "dependencies": {
     "commander": "^13.1.0",
     "js-yaml": "^4.1.0",
-    "puppeteer": "^22.6.0"
+    "puppeteer": "^22.6.0",
+    "striptags": "^3.2.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
