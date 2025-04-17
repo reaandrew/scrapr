@@ -41,7 +41,7 @@ function showHelp() {
 Scrapr - A web scraping tool
 
 Usage: 
-  npm start <url> [options]
+  scrapr <url> [options]
 
 Arguments:
   url                   URL to scrape
@@ -53,10 +53,10 @@ Options:
   -c, --concurrency <num>  Number of concurrent downloads (default: 5)
 
 Examples:
-  npm start https://example.com
-  npm start https://example.com --download ./downloads
-  npm start https://example.com --download ./downloads --extensions jpg,png,gif
-  npm start https://example.com --download ./downloads --concurrency 10
+  scrapr https://example.com
+  scrapr https://example.com --download ./downloads
+  scrapr https://example.com --download ./downloads --extensions jpg,png,gif
+  scrapr https://example.com --download ./downloads --concurrency 10
   `);
 }
 
@@ -70,8 +70,8 @@ async function main() {
   
   if (!options.url) {
     console.error('Please provide a URL to scrape');
-    console.error('Usage: npm start <url> [options]');
-    console.error('Try "npm start --help" for more information');
+    console.error('Usage: scrapr <url> [options]');
+    console.error('Try "scrapr --help" for more information');
     process.exit(1);
   }
   

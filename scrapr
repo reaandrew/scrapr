@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+import { spawnSync } from 'child_process';
+
+// Get the directory name of the current module
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Start the actual script with all command line arguments
+const result = spawnSync('node', [resolve(__dirname, 'src/index.js'), ...process.argv.slice(2)], { 
+  stdio: 'inherit'
+});
+
+// Exit with the same code as the child process
+process.exit(result.status);
