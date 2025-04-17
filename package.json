@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "commander": "^13.1.0",
+    "js-yaml": "^4.1.0",
     "puppeteer": "^22.6.0"
   },
   "devDependencies": {

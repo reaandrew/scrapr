@@ -2,6 +2,7 @@
 import { Command } from 'commander';
 import { scrapeUrl } from './scraper.js';
 import { scrapeConfluence } from './confluence.js';
+import { loadConfig, createSampleConfig } from './config.js';
 import path from 'path';
 import fs from 'fs';
 
@@ -88,38 +89,84 @@ program
 program
   .command('confluence')
   .description('Scrape Confluence pages and store as JSON')
-  .requiredOption('-s, --space-id <id>', 'Confluence space ID to scrape')
-  .requiredOption('-b, --base-url <url>', 'Base URL of Confluence instance')
+  .option('-s, --space-id <id>', 'Confluence space ID to scrape')
+  .option('-b, --base-url <url>', 'Base URL of Confluence instance')
   .option('-o, --output <dir>', 'Output directory for JSON files', './output')
   .option('-u, --username <user>', 'Confluence username (for authentication)')
   .option('-t, --token <token>', 'API token for authentication')
   .option('-c, --concurrency <num>', 'Number of concurrent requests', parseInt, 5)
+  .option('-f, --config <file>', 'Path to config file', './scrapr.config.yml')
   .action(async (options) => {
     try {
-      console.log(`Scraping Confluence space: ${options.spaceId} from ${options.baseUrl}...`);
+      // Try to load config file if it exists
+      let configOptions = {};
+      if (options.config) {
+        try {
+          configOptions = await loadConfig(options.config);
+          console.log(`Loaded configuration from ${options.config}`);
+        } catch (configError) {
+          // Only show warning if the default config file doesn't exist
+          if (options.config !== './scrapr.config.yml' || configError.code !== 'ENOENT') {
+            console.warn(`Warning: Could not load config file: ${configError.message}`);
+          }
+        }
+      }
+      
+      // Merge config with command line options (command line takes precedence)
+      const mergedOptions = {
+        ...configOptions,
+        ...options,
+      };
+      
+      // Check if required options are present after merging
+      if (!mergedOptions.spaceId) {
+        console.error('Error: Space ID is required. Provide it with --space-id or in the config file.');
+        process.exit(1);
+      }
+      
+      if (!mergedOptions.baseUrl) {
+        console.error('Error: Base URL is required. Provide it with --base-url or in the config file.');
+        process.exit(1);
+      }
+      
+      console.log(`Scraping Confluence space: ${mergedOptions.spaceId} from ${mergedOptions.baseUrl}...`);
       console.log('This may take a while depending on the space size and number of pages...');
       
       const confluenceOptions = {
-        baseUrl: options.baseUrl,
-        spaceId: options.spaceId,
-        outputDir: options.output,
-        concurrencyLimit: options.concurrency,
+        baseUrl: mergedOptions.baseUrl,
+        spaceId: mergedOptions.spaceId,
+        outputDir: mergedOptions.output,
+        concurrencyLimit: mergedOptions.concurrency,
       };
       
       // Add authentication if provided
-      if (options.username && options.token) {
+      if (mergedOptions.username && mergedOptions.token) {
         confluenceOptions.auth = {
-          username: options.username,
-          token: options.token
+          username: mergedOptions.username,
+          token: mergedOptions.token
         };
       }
       
       const result = await scrapeConfluence(confluenceOptions);
       
-      console.log(`Scraped ${result.pageCount} pages from Confluence space ${options.spaceId}`);
-      console.log(`Results saved to: ${options.output}`);
+      console.log(`Scraped ${result.pageCount} pages from Confluence space ${mergedOptions.spaceId}`);
+      console.log(`Results saved to: ${mergedOptions.output}`);
     } catch (error) {
       console.error('Error during Confluence scraping:', error.message);
+      process.exit(1);
+    }
+  });
+
+// Create configuration command
+program
+  .command('init-config')
+  .description('Create a sample configuration file')
+  .option('-o, --output <file>', 'Path for the configuration file', './scrapr.config.yml')
+  .action(async (options) => {
+    try {
+      await createSampleConfig(options.output);
+    } catch (error) {
+      console.error('Error creating configuration file:', error.message);
       process.exit(1);
     }
   });
