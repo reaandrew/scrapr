@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/reaandrew/scrapr/compare/v1.4.1...v1.5.0) (2025-04-17)
+
+
+### Features
+
+* add CLI executable script ([8ddc3de](https://github.com/reaandrew/scrapr/commit/8ddc3de0b8e7f6b02650c696990a6288f186dd49))
+
 ## [1.4.1](https://github.com/reaandrew/scrapr/compare/v1.4.0...v1.4.1) (2025-04-04)
 
 
