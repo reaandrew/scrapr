@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/reaandrew/scrapr/compare/v1.6.0...v1.7.0) (2025-04-17)
+
+
+### Features
+
+* add config file support for Confluence scraper ([f9b1739](https://github.com/reaandrew/scrapr/commit/f9b1739fce06a224f4e5a9fd59e3b3016c9c4a1b))
+
 # [1.6.0](https://github.com/reaandrew/scrapr/compare/v1.5.0...v1.6.0) (2025-04-17)
 
 
